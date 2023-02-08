@@ -40,7 +40,7 @@ router.post('/registration', [
         user.save();
         return res.json({ user: user.username, message: 'Регистрация пользователя прошла успешно' })
     } catch (error) {
-        console.error(error);
+        return res.json(error);
     }
 });
 
@@ -66,7 +66,7 @@ router.post('/login', async(req, res) => {
             message: 'Вход выполнен успешно',
         });
     } catch (error) {
-        console.error(error);
+        return res.json(error);
     }
 });
 
@@ -83,7 +83,7 @@ router.get('/auth', authMiddleWare, async(req, res) => {
             },
         });
     } catch (error) {
-        console.error(error);
+        return res.json(error);
     }
 });
 

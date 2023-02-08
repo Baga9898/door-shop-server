@@ -13,18 +13,18 @@ router.post(basePath, roleMiddleWare(['admin']), async(req, res) => {
         await role.save();
         return res.json(role);
     } catch (error) {
-        res.json(error);
+        return res.json(error);
     }
-})
+});
 
 router.get(basePath, roleMiddleWare(['admin']), async(req, res) => {
     try {
         const role = await Role.find();
         return res.json(role);
     } catch (error) {
-        res.json(error);
+        return res.json(error);
     }
-})
+});
 
 router.get(`${basePath}/:id`, roleMiddleWare(['admin']), async(req, res) => {
     try {
@@ -33,9 +33,9 @@ router.get(`${basePath}/:id`, roleMiddleWare(['admin']), async(req, res) => {
         const role = await Role.findById(id);
         return res.json(role);
     } catch (error) {
-        res.json(error);
+        return res.json(error);
     }
-})
+});
 
 router.put(`${basePath}/:id`, roleMiddleWare(['admin']), async(req, res) => {
     try {
@@ -46,9 +46,9 @@ router.put(`${basePath}/:id`, roleMiddleWare(['admin']), async(req, res) => {
         const updatedRole = await Role.findByIdAndUpdate(id, role, {new: true});
         return res.json(updatedRole);
     } catch (error) {
-        res.json(error);
+        return res.json(error);
     }
-})
+});
 
 router.delete(`${basePath}/:id`, roleMiddleWare(['admin']), async(req, res) => {
     try {
@@ -57,8 +57,8 @@ router.delete(`${basePath}/:id`, roleMiddleWare(['admin']), async(req, res) => {
         const role = await Role.findByIdAndDelete(id);
         return res.json(role);
     } catch (error) {
-        res.json(error);
+        return res.json(error);
     }
-})
+});
 
 export default router;

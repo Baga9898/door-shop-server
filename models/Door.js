@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 
 const Door = new mongoose.Schema({
-    name: { type: String, required: true },
-    price: { type: String, required: true },
+    name: { type: String }, // required: true
+    price: { type: String }, // required: true
     makeDate: { type: Date },
     addDate: { type: Date, default: Date.now },
-    image: { type: String, required: true },
-    category: { type: String, required: true, default: 'Other' },
-    article: { type: String, required: true, unique: true },
+    image: { type: String, }, // required: true
+    category: { type: String, default: 'Прочее' },
+    article: { type: String }, // required: true, unique: true
     country: { type: String },
     color: { type: String },
     description: { type: String },
