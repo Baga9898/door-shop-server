@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.4.1
+
+- Written get one door route
 ## 0.4.0
 
 - Written add door image route

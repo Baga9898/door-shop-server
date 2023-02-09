@@ -9,13 +9,24 @@ const basePath = '/doors';
 const upload = multer({ dest: 'uploads/' });
 
 router.post(basePath, upload.single('image'), async(req, res) => { 
-    console.log(req.file, req.body);
-
     if (!req.file) {
         res.send({ code: 500, message: 'err' });
     }
-
-    const name = req.body.name;
+    const { 
+        name, 
+        price,
+        makeDate,
+        category,
+        article,
+        country,
+        color,
+        description,
+        sizes,
+        material,
+        construction,
+        surface,
+        specs,
+    } = req.body;
     const image = req.file.path;
 
     if (!name || !image) {
@@ -24,6 +35,18 @@ router.post(basePath, upload.single('image'), async(req, res) => {
 
     const newDoor = new Door({
         name: name,
+        price: price,
+        makeDate: makeDate,
+        category: category,
+        article: article,
+        country: country,
+        color: color,
+        description: description,
+        sizes: sizes,
+        material: material,
+        construction: construction,
+        surface: surface,
+        specs: specs,
         image: image,
     });
 
@@ -39,6 +62,17 @@ router.post(basePath, upload.single('image'), async(req, res) => {
 router.get(basePath, async(req, res) => {
     try {
         const door = await Door.find();
+        return res.json(door);
+    } catch (error) {
+        return res.json(error);
+    }
+});
+
+router.get(`${basePath}/:id`, async(req, res) => {
+    try {
+        const {id} = req.params;
+        !id && res.status(400).json({ message: 'ID don\'t exist' });
+        const door = await Door.findById(id);
         return res.json(door);
     } catch (error) {
         return res.json(error);
