@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const Door = new mongoose.Schema({
     name: { type: String, required: true },
-    price: { type: String, required: true },
+    price: { type: Number, required: true },
     makeDate: { type: Date },
     addDate: { type: Date, default: Date.now },
     image: { type: String, required: true },

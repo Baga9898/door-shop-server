@@ -8,7 +8,13 @@ const router = new Router();
 const basePath = '/doors';
 const upload = multer({ dest: 'uploads/' });
 
-router.post(basePath, upload.single('image'), async(req, res) => { 
+const middleWare =  {
+    requireRole: roleMiddleWare(['admin']),
+    upload: upload.single('image'),
+};
+
+// router.post(basePath, [middleWare.requireRole, middleWare.upload], async(req, res) => { 
+router.post(basePath, [middleWare.upload], async(req, res) => { 
     if (!req.file) {
         res.send({ code: 500, message: 'err' });
     }
@@ -61,8 +67,48 @@ router.post(basePath, upload.single('image'), async(req, res) => {
 
 router.get(basePath, async(req, res) => {
     try {
-        const door = await Door.find();
-        return res.json(door);
+        const doors = await Door.find();
+        return res.json(doors);
+    } catch (error) {
+        return res.json(error);
+    }
+});
+
+// New arrivals for home page
+router.get(`${basePath}/last-arrivals`, async(req, res) => {
+    try {
+        const doors = await Door.find();
+        return res.json(doors.slice(-16));
+    } catch (error) {
+        return res.json(error);
+    }
+});
+
+// Sorted doors
+router.post(`${basePath}/sort`, async(req, res) => {
+    try {
+        const { sortMode } = req.body;
+        let doors;
+
+        switch (sortMode) {
+            case 'new':
+                doors = await Door.find({});
+                break;
+            
+            case 'cheap':
+                doors = await Door.find({}).sort({ price: 1 });
+                break;
+
+            case 'expencive':
+                doors = await Door.find({}).sort({ price: -1 });
+                break;
+
+            default:
+                doors = await Door.find({});
+                break;
+        }
+
+        return res.json(doors);
     } catch (error) {
         return res.json(error);
     }
@@ -73,6 +119,17 @@ router.get(`${basePath}/:id`, async(req, res) => {
         const {id} = req.params;
         !id && res.status(400).json({ message: 'ID don\'t exist' });
         const door = await Door.findById(id);
+        return res.json(door);
+    } catch (error) {
+        return res.json(error);
+    }
+});
+
+router.delete(`${basePath}/:id`, roleMiddleWare(['admin']), async(req, res) => {
+    try {
+        const {id} = req.params;
+        !id && res.status(400).json({message: 'ID don\'t exist'});
+        const door = await Door.findByIdAndDelete(id);
         return res.json(door);
     } catch (error) {
         return res.json(error);
