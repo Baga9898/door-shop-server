@@ -6,6 +6,7 @@ import mongoose    from 'mongoose';
 
 import authRouter  from './routes/authRouter.js';
 import doorRouter  from './routes/doorRouter.js'
+import mailRouter  from './routes/mailRouter.js';
 import rolesRouter from './routes/rolesRouter.js';
 import usersRouter from './routes/usersRouter.js';
 
@@ -23,6 +24,7 @@ app.use('/auth', authRouter);
 app.use('/api', rolesRouter);
 app.use('/api', usersRouter);
 app.use('/api', doorRouter);
+app.use('/api', mailRouter);
 
 mongoose.set("strictQuery", true);
 

@@ -1,5 +1,5 @@
-import { Router } from "express";
-import multer     from "multer";
+import { Router }   from "express";
+import multer       from "multer";
 
 import { roleMiddleWare } from '../middleware/roleMiddleware.js';
 import Door               from "../models/Door.js";
@@ -13,8 +13,7 @@ const middleWare =  {
     upload: upload.single('image'),
 };
 
-// router.post(basePath, [middleWare.requireRole, middleWare.upload], async(req, res) => { 
-router.post(basePath, [middleWare.upload], async(req, res) => { 
+router.post(basePath, [middleWare.requireRole, middleWare.upload], async(req, res) => { 
     if (!req.file) {
         res.send({ code: 500, message: 'err' });
     }
@@ -67,7 +66,8 @@ router.post(basePath, [middleWare.upload], async(req, res) => {
 
 router.get(basePath, async(req, res) => {
     try {
-        const doors = await Door.find();
+        const newDoors = await Door.find();
+        const doors = newDoors.reverse();
         return res.json(doors);
     } catch (error) {
         return res.json(error);
@@ -75,7 +75,7 @@ router.get(basePath, async(req, res) => {
 });
 
 // New arrivals for home page
-router.get(`${basePath}/last-arrivals`, async(req, res) => {
+router.get(`${basePath}/last-arrivals`, async(req, res) => { // Выводить заключительные 16 добавленных дверей.
     try {
         const doors = await Door.find();
         return res.json(doors.slice(-16));
@@ -92,7 +92,8 @@ router.post(`${basePath}/sort`, async(req, res) => {
 
         switch (sortMode) {
             case 'new':
-                doors = await Door.find({});
+                const newDoors = await Door.find({}); // Добавить сортировку по году производства.
+                doors = newDoors.reverse();
                 break;
             
             case 'cheap':
@@ -104,7 +105,8 @@ router.post(`${basePath}/sort`, async(req, res) => {
                 break;
 
             default:
-                doors = await Door.find({});
+                const defaultDoors = await Door.find({});
+                doors = defaultDoors.reverse();
                 break;
         }
 

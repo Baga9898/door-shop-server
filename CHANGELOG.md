@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 0.6.0
+
+- Added functionality for sending an order to the mail
+
+## 0.5.0
+
+- Added doors sorting
+
 ## 0.4.1
 
 - Written get one door route
