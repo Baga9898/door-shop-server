@@ -17,13 +17,44 @@ const basePath = '/mail';
 
 router.post(`${basePath}`, (req, res) => {
     try {
-        const { customerName, customerPhone, customerMail } = req.body;
+        const { customerName, customerPhone, customerMail, doors } = req.body;
+
+        let message = (`<p>
+            Имя: ${customerName}; <br/>
+            Контактный номер: ${customerPhone}; <br/>
+            Почта: ${customerMail};
+        </p>`);
+
+        message += (
+            '<table style="border: 1px solid #333">' +
+                '<thead>' +
+                    '<th> article </th>' +
+                    '<th> name </th>'  +
+                    '<th> size </th>'  +
+                    '<th> price </th>'  +
+                    '<th> count </th>'  +
+                '</thead>'
+        ); 
+
+        for(const { article, name, size, price, count } of doors) {
+            message += (
+                '<tr>' +
+                    '<td>' + article + '</td>' +
+                    '<td>' + name + '</td>' +
+                    '<td>' + size + '</td>' +
+                    '<td>' + price + '</td>' +
+                    '<td>' + count + '</td>' +
+                '</tr>'
+            );
+        };
+
+        message += '</table>';
 
         const mailOptions = {
             from: `${process.env.EMAIL_ADRESS}`,
             to: `${process.env.EMAIL_ADRESS}`,
-            subject: 'Новый заказ',
-            text: `Пробный заказ, имя: ${customerName}, номер: ${customerPhone} ${customerMail}`,
+            subject: 'Новый заказ', // На фронте добавить номер заказа, здесь его вытаскивать и отправлять в заголовке письма.
+            html: message,
         };
 
         transporter.sendMail(mailOptions, (error) => {
@@ -34,7 +65,7 @@ router.post(`${basePath}`, (req, res) => {
             }
         });
     } catch (error) {
-        console.log(error); // Нотификация об неуспешной отправке письма.
+        return res.send({ code: 400, message: 'Что - то пошло не так' });
     }
 });
 
