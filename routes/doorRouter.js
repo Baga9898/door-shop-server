@@ -1,6 +1,7 @@
-import { Router }   from "express";
-import multer       from "multer";
+import { Router } from "express";
+import multer     from "multer";
 
+import { errorMessage }   from "../constants.js";
 import { roleMiddleWare } from '../middleware/roleMiddleware.js';
 import Door               from "../models/Door.js";
 
@@ -27,6 +28,7 @@ router.post(basePath, [middleWare.requireRole, middleWare.upload], async(req, re
         color,
         description,
         sizes,
+        withLeftRight,
         material,
         construction,
         surface,
@@ -48,6 +50,7 @@ router.post(basePath, [middleWare.requireRole, middleWare.upload], async(req, re
         color: color,
         description: description,
         sizes: sizes,
+        withLeftRight: withLeftRight,
         material: material,
         construction: construction,
         surface: surface,
@@ -70,21 +73,20 @@ router.get(basePath, async(req, res) => {
         const doors = newDoors.reverse();
         return res.json(doors);
     } catch (error) {
-        return res.json(error);
+        return res.json({message: errorMessage});
     }
 });
 
-// New arrivals for home page
-router.get(`${basePath}/last-arrivals`, async(req, res) => { // Выводить заключительные 16 добавленных дверей.
+router.get(`${basePath}/last-arrivals`, async(req, res) => {
     try {
-        const doors = await Door.find();
+        const newDoors = await Door.find({});
+        const doors = newDoors.reverse();
         return res.json(doors.slice(-16));
     } catch (error) {
-        return res.json(error);
+        return res.json({message: errorMessage});
     }
 });
 
-// Sorted doors
 router.post(`${basePath}/sort`, async(req, res) => {
     try {
         const { sortMode } = req.body;
@@ -92,7 +94,7 @@ router.post(`${basePath}/sort`, async(req, res) => {
 
         switch (sortMode) {
             case 'new':
-                const newDoors = await Door.find({}); // Добавить сортировку по году производства.
+                const newDoors = await Door.find({});
                 doors = newDoors.reverse();
                 break;
             
@@ -112,7 +114,7 @@ router.post(`${basePath}/sort`, async(req, res) => {
 
         return res.json(doors);
     } catch (error) {
-        return res.json(error);
+        return res.json({message: errorMessage});
     }
 });
 
@@ -123,7 +125,7 @@ router.get(`${basePath}/:id`, async(req, res) => {
         const door = await Door.findById(id);
         return res.json(door);
     } catch (error) {
-        return res.json(error);
+        return res.json({message: errorMessage});
     }
 });
 
@@ -134,7 +136,7 @@ router.delete(`${basePath}/:id`, roleMiddleWare(['admin']), async(req, res) => {
         const door = await Door.findByIdAndDelete(id);
         return res.json(door);
     } catch (error) {
-        return res.json(error);
+        return res.json({message: errorMessage});
     }
 });
 

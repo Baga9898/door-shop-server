@@ -5,6 +5,7 @@ import bcrypt                      from 'bcryptjs';
 import jwt                         from "jsonwebtoken";
 
 import { authMiddleWare } from '../middleware/authMiddleware.js';
+import { errorMessage }   from '../constants.js';
 import Role               from "../models/Role.js";
 import User               from "../models/User.js";
 
@@ -27,12 +28,12 @@ router.post('/registration', [
     try {
         const errors = validationResult(req);
         if(!errors.isEmpty()) {
-            return res.status(400).json({ message: 'Ошибка регистрации', errors });
+            return res.status(400).json({ message: errorMessage });
         }
         const { username, password } = req.body;
         const candidate = await User.findOne({ username });
         if (candidate) {
-            return res.status(400).json({ message: 'Пользователь с таким именем уже существует' });
+            return res.status(400).json({ message: errorMessage });
         };
         const hashedPassword = bcrypt.hashSync(password, 7);
         const userRole = await Role.findOne({ name: 'watcher' });
@@ -40,7 +41,7 @@ router.post('/registration', [
         user.save();
         return res.json({ user: user.username, message: 'Регистрация пользователя прошла успешно' })
     } catch (error) {
-        return res.json(error);
+        return res.json({message: errorMessage});
     }
 });
 
@@ -49,11 +50,11 @@ router.post('/login', async(req, res) => {
         const { username, password } = req.body;
         const user = await User.findOne({ username });
         if (!user) {
-            return res.status(400).json({ message: `User with name ${username} does not exist` }); // Переписать на 'что - то пошло не так'.
+            return res.status(400).json({ message: errorMessage });
         }
         const validPassword = bcrypt.compareSync(password, user.password);
         if (!validPassword) {
-            return res.status(400).json({ message: `Uncorrect password` }); // Переписать на 'что - то пошло не так'.
+            return res.status(400).json({ message: errorMessage });
         }
         const token = generateAccessToken(user._id, user.roles);
         return res.json({
@@ -66,7 +67,7 @@ router.post('/login', async(req, res) => {
             message: 'Вход выполнен успешно',
         });
     } catch (error) {
-        return res.json(error);
+        return res.json({message: errorMessage});
     }
 });
 
@@ -83,7 +84,7 @@ router.get('/auth', authMiddleWare, async(req, res) => {
             },
         });
     } catch (error) {
-        return res.json(error);
+        return res.json({message: errorMessage});
     }
 });
 

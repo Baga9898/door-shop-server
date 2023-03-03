@@ -12,6 +12,7 @@ const Door = new mongoose.Schema({
     color: { type: String },
     description: { type: String },
     sizes: { type: Array },
+    withLeftRight: { type: Boolean },
     material: { type: String },
     construction: { type: String },
     surface: { type: String },

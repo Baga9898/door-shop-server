@@ -2,10 +2,12 @@ import { Router }  from "express";
 import * as dotenv from 'dotenv';
 import nodemailer  from 'nodemailer';
 
+import { errorMessage } from "../constants.js";
+
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-    service: "gmail",
+    service: 'gmail',
     auth: {
         user: process.env.EMAIL_ADRESS,
         pass: process.env.EMAIL_PASSWORD,
@@ -19,24 +21,27 @@ router.post(`${basePath}`, (req, res) => {
     try {
         const { customerName, customerPhone, customerMail, doors } = req.body;
 
-        let message = (`<p>
-            Имя: ${customerName}; <br/>
-            Контактный номер: ${customerPhone}; <br/>
-            Почта: ${customerMail};
-        </p>`);
+        let message = (
+            `<p>
+                Имя: ${customerName}; <br/>
+                Контактный номер: ${customerPhone}; <br/>
+                Почта: ${customerMail};
+            </p>`
+        );
 
         message += (
             '<table style="border: 1px solid #333">' +
                 '<thead>' +
-                    '<th> article </th>' +
-                    '<th> name </th>'  +
-                    '<th> size </th>'  +
-                    '<th> price </th>'  +
-                    '<th> count </th>'  +
+                    '<th> Артикул </th>' +
+                    '<th> Наименование </th>'  +
+                    '<th> Размер </th>'  +
+                    '<th> Цена </th>'  +
+                    '<th> Количество </th>'  +
+                    '<th> Направление </th>'  +
                 '</thead>'
         ); 
 
-        for(const { article, name, size, price, count } of doors) {
+        for(const { article, name, size, price, count, direction } of doors) {
             message += (
                 '<tr>' +
                     '<td>' + article + '</td>' +
@@ -44,6 +49,7 @@ router.post(`${basePath}`, (req, res) => {
                     '<td>' + size + '</td>' +
                     '<td>' + price + '</td>' +
                     '<td>' + count + '</td>' +
+                    '<td>' + direction + '</td>' +
                 '</tr>'
             );
         };
@@ -61,11 +67,11 @@ router.post(`${basePath}`, (req, res) => {
             if (error) {
                 console.log('error here', error);
             } else {
-                return res.send({ code: 200, message: 'Заказ успешно оформлен, ожидайте звонка, в ближайшее время с вами свяжется менеджер для подтверждения заказа.' }); // Тут нотификация об успешном заказе.
+                return res.send({ code: 200 });
             }
         });
     } catch (error) {
-        return res.send({ code: 400, message: 'Что - то пошло не так' });
+        return res.send({ code: 400, message: errorMessage });
     }
 });
 
