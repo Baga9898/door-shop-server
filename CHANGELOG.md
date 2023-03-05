@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.7.0
+
+- Added pagination
 ## 0.6.0
 
 - Added functionality for sending an order to the mail

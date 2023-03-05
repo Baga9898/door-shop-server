@@ -69,9 +69,17 @@ router.post(basePath, [middleWare.requireRole, middleWare.upload], async(req, re
 
 router.get(basePath, async(req, res) => {
     try {
-        const newDoors = await Door.find();
-        const doors = newDoors.reverse();
+        const doors = await Door.find({}).sort({$natural: -1}).skip(0).limit(20);
         return res.json(doors);
+    } catch (error) {
+        return res.json({message: errorMessage});
+    }
+});
+
+router.get(`${basePath}/length`, async(req, res) => {
+    try {
+        const doors = await Door.find();
+        return res.json(doors.length);
     } catch (error) {
         return res.json({message: errorMessage});
     }
@@ -82,6 +90,8 @@ router.get(`${basePath}/last-arrivals`, async(req, res) => {
         const newDoors = await Door.find({});
         const doors = newDoors.reverse();
         return res.json(doors.slice(-16));
+        // const doors = await Door.find({}).sort({$natural: -1}.limit(16));
+        // return res.json(doors);
     } catch (error) {
         return res.json({message: errorMessage});
     }
@@ -89,26 +99,25 @@ router.get(`${basePath}/last-arrivals`, async(req, res) => {
 
 router.post(`${basePath}/sort`, async(req, res) => {
     try {
-        const { sortMode } = req.body;
+        const { sortMode, currentPage, pageSize } = req.body;
+        const skip = (currentPage - 1) * pageSize;
         let doors;
 
         switch (sortMode) {
             case 'new':
-                const newDoors = await Door.find({});
-                doors = newDoors.reverse();
+                doors = await Door.find({}).sort({$natural: -1}).skip(skip).limit(pageSize);
                 break;
             
             case 'cheap':
-                doors = await Door.find({}).sort({ price: 1 });
+                doors = await Door.find({}).sort({ price: 1 }).skip(skip).limit(pageSize);
                 break;
 
             case 'expencive':
-                doors = await Door.find({}).sort({ price: -1 });
+                doors = await Door.find({}).sort({ price: -1 }).skip(skip).limit(pageSize);
                 break;
 
             default:
-                const defaultDoors = await Door.find({});
-                doors = defaultDoors.reverse();
+                doors = await Door.find({}).sort({$natural: -1}).skip(skip).limit(pageSize);
                 break;
         }
 
