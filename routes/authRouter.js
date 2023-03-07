@@ -71,7 +71,7 @@ router.post('/login', async(req, res) => {
     }
 });
 
-router.get('/auth', authMiddleWare, async(req, res) => {
+router.get('/auth', authMiddleWare, async(req, res) => { // Убрать мидлвеир авторизации.
     try {
         const user = await User.findOne({ _id: req.user.id });
         const token = generateAccessToken(user._id, user.roles);

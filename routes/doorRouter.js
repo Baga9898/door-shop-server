@@ -87,11 +87,8 @@ router.get(`${basePath}/length`, async(req, res) => {
 
 router.get(`${basePath}/last-arrivals`, async(req, res) => {
     try {
-        const newDoors = await Door.find({});
-        const doors = newDoors.reverse();
-        return res.json(doors.slice(-16));
-        // const doors = await Door.find({}).sort({$natural: -1}.limit(16));
-        // return res.json(doors);
+        const doors = await Door.find({}).sort({$natural: -1}).limit(16);
+        return res.json(doors);
     } catch (error) {
         return res.json({message: errorMessage});
     }
