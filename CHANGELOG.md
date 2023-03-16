@@ -3,6 +3,7 @@
 ## 0.7.0
 
 - Added pagination
+
 ## 0.6.0
 
 - Added functionality for sending an order to the mail
@@ -14,6 +15,7 @@
 ## 0.4.1
 
 - Written get one door route
+
 ## 0.4.0
 
 - Written add door image route
