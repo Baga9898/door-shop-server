@@ -25,7 +25,7 @@ router.post(`${basePath}`, (req, res) => {
             `<p>
                 Имя: ${customerName}; <br/>
                 Контактный номер: ${customerPhone}; <br/>
-                Почта: ${customerMail};
+                Почта: ${customerMail || 'Пользователь не указал почту'};
             </p>`
         );
 
@@ -35,7 +35,7 @@ router.post(`${basePath}`, (req, res) => {
                     '<th> Артикул </th>' +
                     '<th> Наименование </th>'  +
                     '<th> Размер </th>'  +
-                    '<th> Цена </th>'  +
+                    '<th> Цена за штуку </th>'  +
                     '<th> Количество </th>'  +
                     '<th> Направление </th>'  +
                 '</thead>'
