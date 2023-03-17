@@ -39,7 +39,16 @@ router.post('/registration', [
         const userRole = await Role.findOne({ name: 'watcher' });
         const user = new User({ username, password: hashedPassword, roles: [userRole.name] });
         user.save();
-        return res.json({ user: user.username, message: 'Регистрация пользователя прошла успешно' })
+        const token = generateAccessToken(user._id, user.roles);
+        return res.json({
+            token,
+            user: {
+                id: user.id,
+                username: user.username,
+                roles: user.roles,
+            },
+            message: 'Регистрация пользователя прошла успешно',
+        });
     } catch (error) {
         return res.json({message: errorMessage});
     }
@@ -71,7 +80,7 @@ router.post('/login', async(req, res) => {
     }
 });
 
-router.get('/auth', authMiddleWare, async(req, res) => { // Убрать мидлвеир авторизации.
+router.get('/auth', authMiddleWare, async(req, res) => { 
     try {
         const user = await User.findOne({ _id: req.user.id });
         const token = generateAccessToken(user._id, user.roles);
