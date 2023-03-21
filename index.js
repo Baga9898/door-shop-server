@@ -18,7 +18,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/uploads', express.static('uploads'));
-app.use(cors({}));
+app.use(cors({origin: '*'}));
 
 app.use('/auth', authRouter);
 app.use('/api', rolesRouter);
@@ -31,7 +31,6 @@ mongoose.set("strictQuery", true);
 const startServer = async () => {
     try {
         await mongoose.connect(process.env.DB_URL);
-
         app.listen(PORT, () => console.log(`SERVER IS RUNNING ON PORT ${PORT}`));
     } catch (error) {
         console.log(error);

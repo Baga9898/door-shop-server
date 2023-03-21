@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
 });
 
 const router = new Router();
-const basePath = '/mail';
+const basePath = '/mail'; // В константы.
 
 router.post(`${basePath}`, (req, res) => {
     try {
@@ -65,7 +65,7 @@ router.post(`${basePath}`, (req, res) => {
 
         transporter.sendMail(mailOptions, (error) => {
             if (error) {
-                console.log('error here', error);
+                console.log('error here', error); // В константы.
             } else {
                 return res.send({ code: 200 });
             }

@@ -6,17 +6,17 @@ import { roleMiddleWare } from '../middleware/roleMiddleware.js';
 import Door               from "../models/Door.js";
 
 const router = new Router();
-const basePath = '/doors';
-const upload = multer({ dest: 'uploads/' });
+const basePath = '/doors'; // В константы.
+const upload = multer({ dest: 'uploads/' }); // В константы.
 
 const middleWare =  {
-    requireRole: roleMiddleWare(['admin']),
-    upload: upload.single('image'),
+    requireRole: roleMiddleWare(['admin']), // В константы.
+    upload: upload.single('image'), // В константы.
 };
 
 router.post(basePath, [middleWare.requireRole, middleWare.upload], async(req, res) => { 
     if (!req.file) {
-        res.send({ code: 500, message: 'err' });
+        res.send({ code: 500, message: 'err' }); // В константы.
     }
     const { 
         name, 
@@ -37,7 +37,7 @@ router.post(basePath, [middleWare.requireRole, middleWare.upload], async(req, re
     const image = req.file.path;
 
     if (!name || !image) {
-        return res.send({ code: 400, message: 'Bad request' });
+        return res.send({ code: 400, message: 'Bad request' }); // В константы.
     }
 
     const newDoor = new Door({
@@ -61,9 +61,9 @@ router.post(basePath, [middleWare.requireRole, middleWare.upload], async(req, re
     const success = await newDoor.save();
 
     if (success) {
-        return res.send({ code: 200, message: 'Added success' });
+        return res.send({ code: 200, message: 'Added success' }); // В константы.
     } else {
-        return res.send({ code: 500, message: 'Service error' });
+        return res.send({ code: 500, message: 'Service error' }); // В константы.
     }
 });
 
@@ -87,7 +87,7 @@ router.get(`${basePath}/length`, async(req, res) => {
 
 router.get(`${basePath}/last-arrivals`, async(req, res) => {
     try {
-        const doors = await Door.find({}).sort({$natural: -1}).limit(16);
+        const doors = await Door.find({}).sort({$natural: -1}).limit(16); // В константы значение количества выводимых дверей на главную страницу.
         return res.json(doors);
     } catch (error) {
         return res.json({message: errorMessage});
@@ -100,16 +100,16 @@ router.post(`${basePath}/sort`, async(req, res) => {
         const skip = (currentPage - 1) * pageSize;
         let doors;
 
-        switch (sortMode) {
-            case 'new':
+        switch (sortMode) { // Переписать сортировку.
+            case 'new': // В константы.
                 doors = await Door.find({}).sort({$natural: -1}).skip(skip).limit(pageSize);
                 break;
             
-            case 'cheap':
+            case 'cheap': // В константы.
                 doors = await Door.find({}).sort({ price: 1 }).skip(skip).limit(pageSize);
                 break;
 
-            case 'expencive':
+            case 'expencive': // В константы.
                 doors = await Door.find({}).sort({ price: -1 }).skip(skip).limit(pageSize);
                 break;
 
@@ -127,7 +127,7 @@ router.post(`${basePath}/sort`, async(req, res) => {
 router.get(`${basePath}/:id`, async(req, res) => {
     try {
         const {id} = req.params;
-        !id && res.status(400).json({ message: 'ID don\'t exist' });
+        !id && res.status(400).json({ message: 'ID don\'t exist' }); // В константы.
         const door = await Door.findById(id);
         return res.json(door);
     } catch (error) {
@@ -135,10 +135,10 @@ router.get(`${basePath}/:id`, async(req, res) => {
     }
 });
 
-router.delete(`${basePath}/:id`, roleMiddleWare(['admin']), async(req, res) => {
+router.delete(`${basePath}/:id`, roleMiddleWare(['admin']), async(req, res) => { // В константы.
     try {
         const {id} = req.params;
-        !id && res.status(400).json({message: 'ID don\'t exist'});
+        !id && res.status(400).json({message: 'ID don\'t exist'});// В константы.
         const door = await Door.findByIdAndDelete(id);
         return res.json(door);
     } catch (error) {

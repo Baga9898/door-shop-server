@@ -1,29 +1,27 @@
-import { check, validationResult } from "express-validator";
-import { Router }                  from "express";
+import { check, validationResult } from 'express-validator';
+import { Router }                  from 'express';
 import * as dotenv                 from 'dotenv';
 import bcrypt                      from 'bcryptjs';
-import jwt                         from "jsonwebtoken";
+import cors                        from 'cors';
+import jwt                         from 'jsonwebtoken';
 
 import { authMiddleWare } from '../middleware/authMiddleware.js';
 import { errorMessage }   from '../constants.js';
-import Role               from "../models/Role.js";
-import User               from "../models/User.js";
+import Role               from '../models/Role.js';
+import User               from '../models/User.js';
 
 dotenv.config();
 
 const router = new Router();
 
 const generateAccessToken = (id, roles) => {
-    const payload = {
-        id,
-        roles,
-    }
-    return jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '24h' });
+    const payload = { id, roles }
+    return jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '24h' }); // Вынести в константы время затухания токена.
 };
 
 router.post('/registration', [
-        check('username', 'Не может быть пустым').notEmpty(),
-        check('password', 'Пароль должен содержать не менее 3 символов').isLength({ min: 3 }),
+        check('username', 'Не может быть пустым').notEmpty(), // В константы.
+        check('password', 'Пароль должен содержать не менее 3 символов').isLength({ min: 3 }), // В константы.
     ], async(req, res) => {
     try {
         const errors = validationResult(req);
@@ -36,7 +34,7 @@ router.post('/registration', [
             return res.status(400).json({ message: errorMessage });
         };
         const hashedPassword = bcrypt.hashSync(password, 7);
-        const userRole = await Role.findOne({ name: 'watcher' });
+        const userRole = await Role.findOne({ name: 'watcher' }); // В константы.
         const user = new User({ username, password: hashedPassword, roles: [userRole.name] });
         user.save();
         const token = generateAccessToken(user._id, user.roles);
@@ -47,14 +45,14 @@ router.post('/registration', [
                 username: user.username,
                 roles: user.roles,
             },
-            message: 'Регистрация пользователя прошла успешно',
+            message: 'Регистрация пользователя прошла успешно', // В константы.
         });
     } catch (error) {
         return res.json({message: errorMessage});
     }
 });
 
-router.post('/login', async(req, res) => {
+router.post('/login', cors(),  async(req, res) => {
     try {
         const { username, password } = req.body;
         const user = await User.findOne({ username });
@@ -73,7 +71,7 @@ router.post('/login', async(req, res) => {
                 username: user.username,
                 roles: user.roles,
             },
-            message: 'Вход выполнен успешно',
+            message: 'Вход выполнен успешно', // В константы.
         });
     } catch (error) {
         return res.json({message: errorMessage});
