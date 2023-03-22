@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/uploads', express.static('uploads'));
 app.use(cors({origin: '*'}));
 
-app.use('/auth', authRouter);
+app.use('/api', authRouter);
 app.use('/api', rolesRouter);
 app.use('/api', usersRouter);
 app.use('/api', doorRouter);
