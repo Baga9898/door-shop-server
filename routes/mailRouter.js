@@ -7,9 +7,10 @@ import { errorMessage } from "../constants.js";
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    service: 'hotmail',
+    port: 587,
     auth: {
-        user: process.env.EMAIL_ADRESS,
+        user: process.env.EMAIL_FROM_ADRESS,
         pass: process.env.EMAIL_PASSWORD,
     },
 });
@@ -57,8 +58,8 @@ router.post(`${basePath}`, (req, res) => {
         message += '</table>';
 
         const mailOptions = {
-            from: `${process.env.EMAIL_ADRESS}`,
-            to: `${process.env.EMAIL_ADRESS}`,
+            from: `${process.env.EMAIL_FROM_ADRESS}`,
+            to: `${process.env.EMAIL_TO_ADRESS}`,
             subject: 'Новый заказ', // На фронте добавить номер заказа, здесь его вытаскивать и отправлять в заголовке письма.
             html: message,
         };

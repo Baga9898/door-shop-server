@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.0.0 MVP
+
+- Basic functionality is ready
+
 ## 0.7.0
 
 - Added pagination
