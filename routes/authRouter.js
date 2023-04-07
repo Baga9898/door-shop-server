@@ -6,7 +6,8 @@ import cors                        from 'cors';
 import jwt                         from 'jsonwebtoken';
 
 import { authMiddleWare } from '../middleware/authMiddleware.js';
-import { errorMessage }   from '../constants.js';
+import * as constants     from '../constants.js';
+import * as texts         from '../texts.js';
 import Role               from '../models/Role.js';
 import User               from '../models/User.js';
 
@@ -16,25 +17,27 @@ const router = new Router();
 
 const generateAccessToken = (id, roles) => {
     const payload = { id, roles }
-    return jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '24h' }); // Вынести в константы время затухания токена.
+    return jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: constants.tokenExpireTime });
 };
 
-router.post('/registration', [
-        check('username', 'Не может быть пустым').notEmpty(), // В константы.
-        check('password', 'Пароль должен содержать не менее 3 символов').isLength({ min: 3 }), // В константы.
+router.post(constants.registrationPath, [
+        check('username', texts.canNotBeEmpty).notEmpty(),
+        check('password', texts.mustContainThree).isLength({ min: constants.minPasswordLenght }),
     ], async(req, res) => {
     try {
         const errors = validationResult(req);
         if(!errors.isEmpty()) {
-            return res.status(400).json({ message: errorMessage });
+            return res.status(400).json({ message: texts.errorMessage });
         }
+
         const { username, password } = req.body;
         const candidate = await User.findOne({ username });
         if (candidate) {
-            return res.status(400).json({ message: errorMessage });
+            return res.status(400).json({ message: texts.errorMessage });
         };
+
         const hashedPassword = bcrypt.hashSync(password, 7);
-        const userRole = await Role.findOne({ name: 'watcher' }); // В константы.
+        const userRole = await Role.findOne({ name: constants.watcherRole });
         const user = new User({ username, password: hashedPassword, roles: [userRole.name] });
         user.save();
         const token = generateAccessToken(user._id, user.roles);
@@ -45,23 +48,23 @@ router.post('/registration', [
                 username: user.username,
                 roles: user.roles,
             },
-            message: 'Регистрация пользователя прошла успешно', // В константы.
+            message: texts.registrationSuccess,
         });
     } catch (error) {
-        return res.json({message: errorMessage});
+        return res.json({message: texts.errorMessage});
     }
 });
 
-router.post('/login', cors(),  async(req, res) => {
+router.post(constants.loginPath, cors(), async(req, res) => {
     try {
         const { username, password } = req.body;
         const user = await User.findOne({ username });
         if (!user) {
-            return res.status(400).json({ message: errorMessage });
+            return res.status(400).json({ message: texts.errorMessage });
         }
         const validPassword = bcrypt.compareSync(password, user.password);
         if (!validPassword) {
-            return res.status(400).json({ message: errorMessage });
+            return res.status(400).json({ message: texts.errorMessage });
         }
         const token = generateAccessToken(user._id, user.roles);
         return res.json({
@@ -71,14 +74,14 @@ router.post('/login', cors(),  async(req, res) => {
                 username: user.username,
                 roles: user.roles,
             },
-            message: 'Вход выполнен успешно', // В константы.
+            message: texts.loginSuccess,
         });
     } catch (error) {
-        return res.json({message: errorMessage});
+        return res.json({message: texts.errorMessage});
     }
 });
 
-router.get('/auth', authMiddleWare, async(req, res) => { 
+router.get(constants.authPath, authMiddleWare, async(req, res) => { 
     try {
         const user = await User.findOne({ _id: req.user.id });
         const token = generateAccessToken(user._id, user.roles);
@@ -91,7 +94,7 @@ router.get('/auth', authMiddleWare, async(req, res) => {
             },
         });
     } catch (error) {
-        return res.json({message: errorMessage});
+        return res.json({message: texts.errorMessage});
     }
 });
 

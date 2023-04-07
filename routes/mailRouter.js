@@ -2,12 +2,10 @@ import { Router }  from "express";
 import * as dotenv from 'dotenv';
 import nodemailer  from 'nodemailer';
 
-import { errorMessage } from "../constants.js";
-
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-    service: 'hotmail',
+    service: 'hotmail', // В константы.
     port: 587,
     auth: {
         user: process.env.EMAIL_FROM_ADRESS,
@@ -66,13 +64,13 @@ router.post(`${basePath}`, (req, res) => {
 
         transporter.sendMail(mailOptions, (error) => {
             if (error) {
-                console.log('error here', error); // В константы.
+                console.log('Send mail error', error); // В константы.
             } else {
                 return res.send({ code: 200 });
             }
         });
     } catch (error) {
-        return res.send({ code: 400, message: errorMessage });
+        return res.send({ code: 400, error});
     }
 });
 

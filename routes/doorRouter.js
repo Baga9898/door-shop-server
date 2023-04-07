@@ -1,22 +1,22 @@
-import { Router } from "express";
-import multer     from "multer";
+import { Router } from 'express';
+import multer     from 'multer';
 
-import { errorMessage }   from "../constants.js";
 import { roleMiddleWare } from '../middleware/roleMiddleware.js';
-import Door               from "../models/Door.js";
+import * as constants     from '../constants.js';
+import * as texts         from '../texts.js';
+import Door               from '../models/Door.js';
 
 const router = new Router();
-const basePath = '/doors'; // В константы.
-const upload = multer({ dest: 'uploads/' }); // В константы.
+const upload = multer({ dest: constants.uploadsPath });
 
 const middleWare =  {
-    requireRole: roleMiddleWare(['admin']), // В константы.
-    upload: upload.single('image'), // В константы.
+    requireRole: roleMiddleWare([constants.adminRole]),
+    upload: upload.single('image'),
 };
 
-router.post(basePath, [middleWare.requireRole, middleWare.upload], async(req, res) => { 
+router.post(constants.basePath, [middleWare.requireRole, middleWare.upload], async(req, res) => { 
     if (!req.file) {
-        res.send({ code: 500, message: 'err' }); // В константы.
+        res.send({ code: 500, message: texts.fileNotFound });
     }
     const { 
         name, 
@@ -37,7 +37,7 @@ router.post(basePath, [middleWare.requireRole, middleWare.upload], async(req, re
     const image = req.file.path;
 
     if (!name || !image) {
-        return res.send({ code: 400, message: 'Bad request' }); // В константы.
+        return res.send({ code: 400, message: texts.badRequest });
     }
 
     const newDoor = new Door({
@@ -61,88 +61,104 @@ router.post(basePath, [middleWare.requireRole, middleWare.upload], async(req, re
     const success = await newDoor.save();
 
     if (success) {
-        return res.send({ code: 200, message: 'Added success' }); // В константы.
+        return res.send({ code: 200, message: texts.addedSuccess });
     } else {
-        return res.send({ code: 500, message: 'Service error' }); // В константы.
+        return res.send({ code: 500, message: texts.serviceError });
     }
 });
 
-router.get(basePath, async(req, res) => {
+router.get(constants.basePath, async(req, res) => {
     try {
-        const doors = await Door.find({}).sort({$natural: -1}).skip(0).limit(20);
+        const doors = await Door.find({}).sort({$natural: -1}).skip(0).limit(constants.defaultLimitValue);
         return res.json(doors);
     } catch (error) {
-        return res.json({message: errorMessage});
+        return res.json(error);
     }
 });
 
-router.get(`${basePath}/length`, async(req, res) => {
+router.post(`${constants.basePath}/search`, async(req, res) => {
+    try {
+        const { searchText } = req.body;
+        const search = searchText ? {
+            '$or': [
+                { name: { $regex: searchText, $options: '$i' } },
+                { article: { $regex: searchText, $options: '$i' } },
+            ],
+        } : {};
+        const resultDoors = await Door.find(search).limit(constants.limitOfSearch);
+        return res.json(resultDoors);
+    } catch (error) {
+        return res.json(error);
+    }
+});
+
+router.get(`${constants.basePath}/length`, async(req, res) => {
     try {
         const doors = await Door.find();
         return res.json(doors.length);
     } catch (error) {
-        return res.json({message: errorMessage});
+        return res.json(error);
     }
 });
 
-router.get(`${basePath}/last-arrivals`, async(req, res) => {
+router.get(`${constants.basePath}/last-arrivals`, async(req, res) => {
     try {
-        const doors = await Door.find({}).sort({$natural: -1}).limit(16); // В константы значение количества выводимых дверей на главную страницу.
+        const doors = await Door.find({}).sort({$natural: -1}).limit(constants.mainPageItemsCount);
         return res.json(doors);
     } catch (error) {
-        return res.json({message: errorMessage});
+        return res.json(error);
     }
 });
 
-router.post(`${basePath}/sort`, async(req, res) => {
-    try {
-        const { sortMode, currentPage, pageSize } = req.body;
-        const skip = (currentPage - 1) * pageSize;
-        let doors;
+// router.post(`${constants.basePath}/sort`, async(req, res) => {
+//     try {
+//         const { sortMode, currentPage, pageSize } = req.body;
+//         const skip = (currentPage - 1) * pageSize;
+//         let doors;
 
-        switch (sortMode) { // Переписать сортировку.
-            case 'new': // В константы.
-                doors = await Door.find({}).sort({$natural: -1}).skip(skip).limit(pageSize);
-                break;
+//         switch (sortMode) { // Переписать сортировку.
+//             case 'new': // В константы.
+//                 doors = await Door.find({}).sort({$natural: -1}).skip(skip).limit(pageSize);
+//                 break;
             
-            case 'cheap': // В константы.
-                doors = await Door.find({}).sort({ price: 1 }).skip(skip).limit(pageSize);
-                break;
+//             case 'cheap': // В константы.
+//                 doors = await Door.find({}).sort({ price: 1 }).skip(skip).limit(pageSize);
+//                 break;
 
-            case 'expencive': // В константы.
-                doors = await Door.find({}).sort({ price: -1 }).skip(skip).limit(pageSize);
-                break;
+//             case 'expencive': // В константы.
+//                 doors = await Door.find({}).sort({ price: -1 }).skip(skip).limit(pageSize);
+//                 break;
 
-            default:
-                doors = await Door.find({}).sort({$natural: -1}).skip(skip).limit(pageSize);
-                break;
-        }
+//             default:
+//                 doors = await Door.find({}).sort({$natural: -1}).skip(skip).limit(pageSize);
+//                 break;
+//         }
 
-        return res.json(doors);
-    } catch (error) {
-        return res.json({message: errorMessage});
-    }
-});
+//         return res.json(doors);
+//     } catch (error) {
+//         return res.json({message: texts.errorMessage});
+//     }
+// });
 
-router.get(`${basePath}/:id`, async(req, res) => {
+router.get(`${constants.basePath}/:id`, async(req, res) => {
     try {
         const {id} = req.params;
-        !id && res.status(400).json({ message: 'ID don\'t exist' }); // В константы.
+        !id && res.status(400).json({ message: texts.idDoesNotExist });
         const door = await Door.findById(id);
         return res.json(door);
     } catch (error) {
-        return res.json({message: errorMessage});
+        return res.json(error);
     }
 });
 
-router.delete(`${basePath}/:id`, roleMiddleWare(['admin']), async(req, res) => { // В константы.
+router.delete(`${constants.basePath}/:id`, roleMiddleWare([constants.adminRole]), async(req, res) => {
     try {
         const {id} = req.params;
-        !id && res.status(400).json({message: 'ID don\'t exist'});// В константы.
+        !id && res.status(400).json({message: texts.idDoesNotExist});
         const door = await Door.findByIdAndDelete(id);
         return res.json(door);
     } catch (error) {
-        return res.json({message: errorMessage});
+        return res.json({message: texts.errorMessage});
     }
 });
 
