@@ -18,7 +18,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/uploads', express.static('uploads'));
-app.use(cors({origin: '*'}));
+app.use(cors({origin: '*'})); // Заменить на актуальные.
 
 app.use('/api', authRouter);
 app.use('/api', rolesRouter);

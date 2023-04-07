@@ -2,7 +2,6 @@ import { check, validationResult } from 'express-validator';
 import { Router }                  from 'express';
 import * as dotenv                 from 'dotenv';
 import bcrypt                      from 'bcryptjs';
-import cors                        from 'cors';
 import jwt                         from 'jsonwebtoken';
 
 import { authMiddleWare } from '../middleware/authMiddleware.js';
@@ -36,7 +35,7 @@ router.post(constants.registrationPath, [
             return res.status(400).json({ message: texts.errorMessage });
         };
 
-        const hashedPassword = bcrypt.hashSync(password, 7);
+        const hashedPassword = bcrypt.hashSync(password, constants.encriptionComplexity);
         const userRole = await Role.findOne({ name: constants.watcherRole });
         const user = new User({ username, password: hashedPassword, roles: [userRole.name] });
         user.save();
@@ -55,7 +54,7 @@ router.post(constants.registrationPath, [
     }
 });
 
-router.post(constants.loginPath, cors(), async(req, res) => {
+router.post(constants.loginPath, async(req, res) => {
     try {
         const { username, password } = req.body;
         const user = await User.findOne({ username });
