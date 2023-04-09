@@ -1,7 +1,7 @@
 // Magic numers
 export const encriptionComplexity = 7;
 export const defaultLimitValue    = 20;
-export const limitOfSearch        = 10;
+export const limitOfSearch        = 5;
 export const mainPageItemsCount   = 16;
 export const minPasswordLenght    = 3;
 export const tokenExpireTime      = '24h';
