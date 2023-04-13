@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.1.2
+
+- Added `all doors` route for dynamic sitemap generate
+
 ## 1.1.1
 
 - Global search options bug fix

@@ -92,6 +92,15 @@ router.post(`${constants.basePath}/search`, async(req, res) => {
     }
 });
 
+router.get(`${constants.basePath}/all`, async(req, res) => {
+    try {
+        const doors = await Door.find();
+        return res.json(doors);
+    } catch (error) {
+        return res.json(error);
+    }
+});
+
 router.get(`${constants.basePath}/length`, async(req, res) => {
     try {
         const doors = await Door.find();
