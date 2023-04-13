@@ -81,8 +81,8 @@ router.post(`${constants.basePath}/search`, async(req, res) => {
         const { searchText } = req.body;
         const search = searchText ? {
             '$or': [
-                { name: { $regex: searchText, $options: '$i' } },
-                { article: { $regex: searchText, $options: '$i' } },
+                { name: { $regex: searchText, $options: 'i' } },
+                { article: { $regex: searchText, $options: 'i' } },
             ],
         } : {};
         const resultDoors = await Door.find(search).limit(constants.limitOfSearch);

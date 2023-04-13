@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.1.1
+
+- Global search options bug fix
+
 ## 1.1.0
 
 - Added global search
