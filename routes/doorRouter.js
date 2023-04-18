@@ -119,35 +119,37 @@ router.get(`${constants.basePath}/last-arrivals`, async(req, res) => {
     }
 });
 
-// router.post(`${constants.basePath}/sort`, async(req, res) => {
-//     try {
-//         const { sortMode, currentPage, pageSize } = req.body;
-//         const skip = (currentPage - 1) * pageSize;
-//         let doors;
+router.post(`${constants.basePath}/sort`, async(req, res) => {
+    try {
+        const { sortMode, currentPage, pageSize } = req.body;
+        const skip = (currentPage - 1) * pageSize;
+        let doors;
 
-//         switch (sortMode) { // Переписать сортировку.
-//             case 'new': // В константы.
-//                 doors = await Door.find({}).sort({$natural: -1}).skip(skip).limit(pageSize);
-//                 break;
+        switch (sortMode) { // Переписать сортировку, в данный момент работает некорректно.
+            case 'new': // В константы.
+                doors = await Door.find({}).sort({$natural: -1}).skip(skip).limit(pageSize);
+                break;
             
-//             case 'cheap': // В константы.
-//                 doors = await Door.find({}).sort({ price: 1 }).skip(skip).limit(pageSize);
-//                 break;
+            // case 'cheap': // В константы.
+            //     doors = await Door.find({}).sort({ price: 1 }).skip(skip).limit(pageSize);
+            //     break;
 
-//             case 'expencive': // В константы.
-//                 doors = await Door.find({}).sort({ price: -1 }).skip(skip).limit(pageSize);
-//                 break;
+            // case 'expencive': // В константы.
+            //     doors = await Door.find({}).sort({ price: -1 }).skip(skip).limit(pageSize);
+            //     break;
 
-//             default:
-//                 doors = await Door.find({}).sort({$natural: -1}).skip(skip).limit(pageSize);
-//                 break;
-//         }
+            default:
+                doors = await Door.find({}).sort({$natural: -1}).skip(skip).limit(pageSize);
+                break;
+        }
 
-//         return res.json(doors);
-//     } catch (error) {
-//         return res.json({message: texts.errorMessage});
-//     }
-// });
+        setTimeout(() => {
+            return res.json(doors);
+        }, 1000)
+    } catch (error) {
+        return res.json({message: texts.errorMessage});
+    }
+});
 
 router.get(`${constants.basePath}/:id`, async(req, res) => {
     try {
