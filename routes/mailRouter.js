@@ -1,12 +1,15 @@
-import { Router }  from "express";
+import { Router }  from 'express';
 import * as dotenv from 'dotenv';
 import nodemailer  from 'nodemailer';
+
+import * as constants from '../constants.js';
+import * as texts     from '../texts.js';
 
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-    service: 'hotmail', // В константы.
-    port: 587,
+    service: constants.smtpName,
+    port: constants.smtpPort,
     auth: {
         user: process.env.EMAIL_FROM_ADRESS,
         pass: process.env.EMAIL_PASSWORD,
@@ -14,7 +17,7 @@ const transporter = nodemailer.createTransport({
 });
 
 const router = new Router();
-const basePath = '/mail'; // В константы.
+const basePath = constants.mailPath;
 
 router.post(`${basePath}`, (req, res) => {
     try {
@@ -24,7 +27,7 @@ router.post(`${basePath}`, (req, res) => {
             `<p>
                 Имя: ${customerName}; <br/>
                 Контактный номер: ${customerPhone}; <br/>
-                Почта: ${customerMail || 'Пользователь не указал почту'};
+                Почта: ${customerMail || texts.emailNotSpecified};
             </p>`
         );
 
@@ -58,13 +61,13 @@ router.post(`${basePath}`, (req, res) => {
         const mailOptions = {
             from: `${process.env.EMAIL_FROM_ADRESS}`,
             to: `${process.env.EMAIL_TO_ADRESS}`,
-            subject: 'Новый заказ', // На фронте добавить номер заказа, здесь его вытаскивать и отправлять в заголовке письма.
+            subject: texts.emailSubject,
             html: message,
         };
 
         transporter.sendMail(mailOptions, (error) => {
             if (error) {
-                console.log('Send mail error', error); // В константы.
+                console.log(texts.mailError, error);
             } else {
                 return res.send({ code: 200 });
             }

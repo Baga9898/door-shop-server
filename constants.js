@@ -10,9 +10,14 @@ export const tokenExpireTime      = '24h';
 export const authPath         = '/auth';
 export const basePath         = '/doors';
 export const loginPath        = '/login';
+export const mailPath         = '/mail';
 export const registrationPath = '/registration';
 export const uploadsPath      = 'uploads/';
 
 // Roles
-export const adminRole = 'admin';
+export const adminRole   = 'admin';
 export const watcherRole = 'watcher';
+
+// SMTP
+export const smtpName = 'hotmail';
+export const smtpPort = 587;
