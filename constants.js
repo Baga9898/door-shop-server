@@ -13,6 +13,7 @@ export const loginPath        = '/login';
 export const mailPath         = '/mail';
 export const registrationPath = '/registration';
 export const uploadsPath      = 'uploads/';
+export const usersPath        = '/users';
 
 // Roles
 export const adminRole   = 'admin';
