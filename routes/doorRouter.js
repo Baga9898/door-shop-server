@@ -125,16 +125,16 @@ router.post(`${constants.basePath}/sort`, async(req, res) => {
         const skip = (currentPage - 1) * pageSize;
         let doors;
 
-        switch (sortMode) { // Переписать сортировку, в данный момент работает некорректно.
-            case 'new': // В константы.
-                doors = await Door.find({}).sort({$natural: -1}).skip(skip).limit(pageSize);
-                break;
+        switch (sortMode) {
+            // case constants.newMode:
+            //     doors = await Door.find({}).sort({$natural: -1}).skip(skip).limit(pageSize);
+            //     break;
             
-            // case 'cheap': // В константы.
+            // case constants.cheapMode:
             //     doors = await Door.find({}).sort({ price: 1 }).skip(skip).limit(pageSize);
             //     break;
 
-            // case 'expencive': // В константы.
+            // case constants.expensiveMode:
             //     doors = await Door.find({}).sort({ price: -1 }).skip(skip).limit(pageSize);
             //     break;
 

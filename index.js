@@ -4,11 +4,13 @@ import cors        from 'cors';
 import express     from 'express';
 import mongoose    from 'mongoose';
 
-import authRouter  from './routes/authRouter.js';
-import doorRouter  from './routes/doorRouter.js'
-import mailRouter  from './routes/mailRouter.js';
-import rolesRouter from './routes/rolesRouter.js';
-import usersRouter from './routes/usersRouter.js';
+import { corsError }       from './texts.js';
+import * as constants      from './constants.js';
+import authRouter          from './routes/authRouter.js';
+import doorRouter          from './routes/doorRouter.js'
+import mailRouter          from './routes/mailRouter.js';
+import rolesRouter         from './routes/rolesRouter.js';
+import usersRouter         from './routes/usersRouter.js';
 
 dotenv.config();
 
@@ -18,15 +20,25 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/uploads', express.static('uploads'));
-app.use(cors({origin: '*'})); // Заменить на актуальные.
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
 
-app.use('/api', authRouter);
-app.use('/api', rolesRouter);
-app.use('/api', usersRouter);
-app.use('/api', doorRouter);
-app.use('/api', mailRouter);
+        if (constants.accessWhiteList.indexOf(origin) === -1) {
+            return callback(new Error(corsError), false);
+        }
 
-mongoose.set("strictQuery", true);
+        return callback(null, true);
+    },
+}));
+
+app.use(constants.apiPath, authRouter);
+app.use(constants.apiPath, rolesRouter);
+app.use(constants.apiPath, usersRouter);
+app.use(constants.apiPath, doorRouter);
+app.use(constants.apiPath, mailRouter);
+
+mongoose.set('strictQuery', true);
 
 const startServer = async () => {
     try {

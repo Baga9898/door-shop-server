@@ -1,6 +1,8 @@
 import * as dotenv from 'dotenv';
 import jwt         from 'jsonwebtoken';
 
+import * as texts from '../texts.js';
+
 dotenv.config();
 
 export const roleMiddleWare = (roles) => {
@@ -12,7 +14,7 @@ export const roleMiddleWare = (roles) => {
         try {
             const token = req.headers.authorization.split(' ')[1];
             if (!token) {
-                return res.status(403).json({ message: 'Пользователь не авторизован' });
+                return res.status(403).json({ message: texts.userNotAuthError });
             }
             const { roles: userRoles } = jwt.verify(token, process.env.SECRET_KEY);
             let hasRole = false;
@@ -22,11 +24,11 @@ export const roleMiddleWare = (roles) => {
                 }
             });
             if (!hasRole) {
-                return res.status(403).json({ message: 'Нет доступа' });
+                return res.status(403).json({ message: texts.accessDeniedError });
             }
             next();
         } catch (error) {
-            return res.status(403).json({ message: 'Пользователь не авторизован' });
+            return res.status(403).json({ message: texts.userNotAuthError });
         }
     };
 };
