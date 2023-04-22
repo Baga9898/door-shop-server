@@ -4,13 +4,13 @@ import cors        from 'cors';
 import express     from 'express';
 import mongoose    from 'mongoose';
 
-import * as constants      from './constants.js';
-import * as texts          from './texts.js';
-import authRouter          from './routes/authRouter.js';
-import doorRouter          from './routes/doorRouter.js'
-import mailRouter          from './routes/mailRouter.js';
-import rolesRouter         from './routes/rolesRouter.js';
-import usersRouter         from './routes/usersRouter.js';
+import * as constants from './constants.js';
+import * as texts     from './texts.js';
+import authRouter     from './routes/authRouter.js';
+import doorRouter     from './routes/doorRouter.js'
+import mailRouter     from './routes/mailRouter.js';
+import rolesRouter    from './routes/rolesRouter.js';
+import usersRouter    from './routes/usersRouter.js';
 
 dotenv.config();
 
