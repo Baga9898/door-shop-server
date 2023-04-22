@@ -1,5 +1,6 @@
 // Default values
 export const defaultCategory = 'Прочие';
+export const defaultPort     = 5000;
 export const defaultRole     = 'watcher';
 
 // Magic numers
@@ -19,6 +20,7 @@ export const mailPath         = '/mail';
 export const registrationPath = '/registration';
 export const rolesPath        = '/roles';
 export const uploadsPath      = 'uploads/';
+export const uploadsRoutePath = '/uploads';
 export const usersPath        = '/users';
 
 // Roles
@@ -36,3 +38,4 @@ export const newMode       = 'new';
 
 // Others
 export const accessWhiteList = ['http://localhost:3000', 'https://portaldoorsstore.ru'];
+export const staticFolder    = 'uploads';

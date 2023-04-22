@@ -14,12 +14,12 @@ import usersRouter         from './routes/usersRouter.js';
 
 dotenv.config();
 
-const PORT = process.env.PORT || 5000; 
+const PORT = process.env.PORT || constants.defaultPort; 
 const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use('/uploads', express.static('uploads'));
+app.use(constants.uploadsRoutePath, express.static(constants.staticFolder));
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin) return callback(null, true);
