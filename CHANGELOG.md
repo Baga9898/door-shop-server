@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.1.3
+
+- Added actually cors
+
 ## 1.1.2
 
 - Added `all doors` route for dynamic sitemap generate
