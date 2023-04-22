@@ -36,4 +36,3 @@ export const newMode       = 'new';
 
 // Others
 export const accessWhiteList = ['http://localhost:3000', 'https://portaldoorsstore.ru'];
-

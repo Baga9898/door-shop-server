@@ -19,3 +19,6 @@ export const mustContainThree = 'Пароль должен содержать х
 // Email
 export const emailNotSpecified = 'Пользователь не указал почту';
 export const emailSubject      = 'Новый заказ';
+
+// Others
+export const serverStartText   = 'SERVER IS RUNNING ON PORT';

@@ -4,8 +4,8 @@ import cors        from 'cors';
 import express     from 'express';
 import mongoose    from 'mongoose';
 
-import { corsError }       from './texts.js';
 import * as constants      from './constants.js';
+import * as texts          from './texts.js';
 import authRouter          from './routes/authRouter.js';
 import doorRouter          from './routes/doorRouter.js'
 import mailRouter          from './routes/mailRouter.js';
@@ -25,7 +25,7 @@ app.use(cors({
         if (!origin) return callback(null, true);
 
         if (constants.accessWhiteList.indexOf(origin) === -1) {
-            return callback(new Error(corsError), false);
+            return callback(new Error(texts.corsError), false);
         }
 
         return callback(null, true);
@@ -43,7 +43,7 @@ mongoose.set('strictQuery', true);
 const startServer = async () => {
     try {
         await mongoose.connect(process.env.DB_URL);
-        app.listen(PORT, () => console.log(`SERVER IS RUNNING ON PORT ${PORT}`));
+        app.listen(PORT, () => console.log(`${texts.serverStartText} ${PORT}`));
     } catch (error) {
         console.log(error);
     }
