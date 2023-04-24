@@ -15,6 +15,7 @@ export const tokenExpireTime      = '24h';
 export const apiPath          = '/api';
 export const authPath         = '/auth';
 export const basePath         = '/doors';
+export const cartPath         = '/cart';
 export const loginPath        = '/login';
 export const mailPath         = '/mail';
 export const registrationPath = '/registration';

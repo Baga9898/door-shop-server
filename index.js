@@ -7,6 +7,7 @@ import mongoose    from 'mongoose';
 import * as constants from './constants.js';
 import * as texts     from './texts.js';
 import authRouter     from './routes/authRouter.js';
+import cartRouter     from './routes/cartRouter.js';
 import doorRouter     from './routes/doorRouter.js'
 import mailRouter     from './routes/mailRouter.js';
 import rolesRouter    from './routes/rolesRouter.js';
@@ -33,6 +34,7 @@ app.use(cors({
 }));
 
 app.use(constants.apiPath, authRouter);
+app.use(constants.apiPath, cartRouter);
 app.use(constants.apiPath, rolesRouter);
 app.use(constants.apiPath, usersRouter);
 app.use(constants.apiPath, doorRouter);
