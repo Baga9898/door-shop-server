@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.2.0
+
+- Implemented the transition of storing data about the user's shopping cart from local storage to the server
+
 ## 1.1.3
 
 - Added actually cors

@@ -74,7 +74,7 @@ router.put(`${basePath}/edit/:id`, async(req, res) => {
             && door.chosenSize === newDoor.chosenSize 
             && (door.direction && door.direction === newDoor.direction)
         );
-        
+
         cartDoors[currentDoorIndex] = newDoor;
         const newCart = {
             uniqueUserId: uniqueId,
@@ -88,7 +88,7 @@ router.put(`${basePath}/edit/:id`, async(req, res) => {
     }
 });
 
-router.put(`${basePath}/delete/:id`, async(req, res) => {
+router.put(`${basePath}/clear/:id`, async(req, res) => {
     try {
         const uniqueId = req.params.id;
         const { cartDoors } = [];
@@ -102,6 +102,35 @@ router.put(`${basePath}/delete/:id`, async(req, res) => {
             uniqueUserId: uniqueId,
             cartDoors: cartDoors, 
         });
+    } catch (error) {
+        return res.json(error);
+    }
+});
+
+router.put(`${basePath}/delete/:id`, async(req, res) => {
+    try {
+        const uniqueId = req.params.id;
+        const { currentDoorId, chosenSize, direction } = req.body;
+        const currentCart = await Cart.find({"userUniqueId": uniqueId});
+        const cartDoors = currentCart[0].cartDoors;
+        const currentDoor = cartDoors.filter(door => door._id === currentDoorId
+            && door.chosenSize === chosenSize 
+            && (door.direction && door.direction === direction)
+        )[0];
+
+        const currentDoorIndex = cartDoors.findIndex(door => door._id === currentDoor._id
+            && door.chosenSize === currentDoor.chosenSize 
+            && (door.direction && door.direction === currentDoor.direction)
+        );
+
+        cartDoors.splice(currentDoorIndex, 1);
+        const newCart = {
+            uniqueUserId: uniqueId,
+            cartDoors: cartDoors, 
+        };
+        
+        await Cart.findOneAndUpdate({"userUniqueId": uniqueId}, newCart, {new: true});
+        return res.json(newCart);
     } catch (error) {
         return res.json(error);
     }
